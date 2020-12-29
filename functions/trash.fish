@@ -1,60 +1,42 @@
 function trash -d "Move files to the Trash"
-  test -z "$argv" && set argv -h
-  argparse l/list e/empty v/verbose h/help -- $argv || return
-  
-  if set -q _flag_help
-    echo "Usage: trash <files>  Move files to the Trash"
-    echo "Options:"
-    echo "       -l, --list     List files in the Trash"
-    echo "       -e, --empty    Empty the Trash"
-    echo "       -v, --verbose  Show trashed files/stats"
-    echo "       -h, --help     Show help message"
-    return
-  end
+    test -z "$argv" && set argv --help
+    argparse l/list e/empty v/verbose h/help -- $argv || return
 
-  if set -q _flag_list
-    set trash (_list_trash)
-    echo $trash | string split " "
-
-    if set -q _flag_verbose
-      set size (command du -sh ~/.Trash | string split \t)[1]
-      echo trash: (count $trash) files,$size
+    if set -q _flag_list
+        _trash_list $_flag_verbose
+        return
+    else if set -q _flag_empty
+        _trash_empty
+        return
+    else if set -q _flag_help
+        _trash_help
+        return
     end
 
-    return
-  end
+    set paths
 
-  if set -q _flag_empty
-    read -P "Empty the Trash? [y/N] " confirm
+    for arg in $argv
+        # TODO: Use `builtin realpath -s` after Fish 3.2
+        set path (_normalize_path $arg)
 
-    if test (string lower $confirm) = y
-      command osascript -e 'tell app "Finder" to empty trash'
+        if builtin contains $path $paths
+            continue
+        end
+
+        if test -e $path || test -L $path
+            set -a paths $path
+        else
+            echo trash: $arg does not exist
+        end
     end
 
-    return
-  end
+    if test -n "$paths"
+        if set -q _flag_verbose
+            string collect $paths
+        end
 
-  set files
-
-  for arg in $argv
-    set path (realpath $arg)
-
-    if ! builtin contains $path $files
-      if test -e $path
-        set -a files $path
-      else
-        echo trash: $arg: No such file or directory
-      end
+        # https://apple.stackexchange.com/a/162354
+        set files 'POSIX file "'$paths'"'
+        command osascript -e 'tell app "Finder" to move {'(string join , $files)'} to trash' >/dev/null
     end
-  end
-
-  if test -n "$files"
-    if set -q _flag_verbose
-      echo $files | string split " "
-    end
-
-    # https://apple.stackexchange.com/a/162354
-    set target 'the POSIX file "'$files'"'
-    command osascript -e 'tell app "Finder" to move {'(string join , $target)'} to trash' > /dev/null
-  end
 end
