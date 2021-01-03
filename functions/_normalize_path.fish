@@ -1,15 +1,15 @@
 function _normalize_path -a path
   set comps (string split / $path)
 
-  if string match -q '/*' $path
-    set new_comps ''
+  if string match -q "/*" $path
+    set new_comps ""
   else
     set new_comps (string split / $PWD)
   end
 
   for comp in $comps
     switch $comp
-      case '' .
+      case "" .
       case ..
         set -e new_comps[-1]
       case \*
