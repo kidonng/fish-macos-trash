@@ -11,6 +11,6 @@ function _trash_list
             string collect $trash
         end
     else
-        echo trash: nothing to list
+        echo trash: trash is empty
     end
 end

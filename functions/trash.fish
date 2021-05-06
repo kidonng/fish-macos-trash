@@ -25,7 +25,7 @@ function trash -d "Move files to the Trash"
         if test -e $path || test -L $path
             set -a paths $path
         else
-            echo trash: $arg does not exist
+            echo trash: $arg does not exist >&2
             set error
         end
     end

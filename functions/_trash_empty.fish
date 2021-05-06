@@ -8,6 +8,6 @@ function _trash_empty
             command osascript -e 'tell app "Finder" to empty trash'
         end
     else
-        echo trash: nothing to empty
+        echo trash: trash is empty
     end
 end
