@@ -1,4 +1,4 @@
-# 🐟🍎🗑 Fish macOS Trash
+# 🐟🍎🗑 trash.fish
 
 [Fish](https://fishshell.com/) plugin for macOS Trash.
 
@@ -13,13 +13,13 @@ Fish 3.2.0 or above is required.
 - [plug.fish](https://github.com/kidonng/plug.fish)
 
   ```sh
-  plug install kidonng/fish-macos-trash
+  plug install kidonng/trash.fish
   ```
 
 - [Fisher](https://github.com/jorgebucaran/fisher)
 
   ```sh
-  fisher install kidonng/fish-macos-trash
+  fisher install kidonng/trash.fish
   ```
 
 ## Usage
